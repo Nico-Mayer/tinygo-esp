@@ -6,27 +6,50 @@ import (
 )
 
 const (
-	DELAY = 200
+	DELAY = 1000
 )
 
-func main() {
-	// Initialize serial for output
-	serial := machine.Serial
-	serial.Configure(machine.UARTConfig{BaudRate: 115200})
+var led machine.Pin
 
-	// Initialize LED
-	led := machine.GPIO2
+func main() {
+	// Configure LED pin for your board:
+	// ESP32/ESP32-S3: GPIO2
+	// ESP32-C3: GPIO2
+	led = machine.GPIO2
 	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
 
-	serial.Write([]byte("LED Blink Example\r\n"))
-
 	for {
-		serial.Write([]byte("LED ON\r\n"))
-		led.High()
-		time.Sleep(time.Millisecond * DELAY)
+		// S: ***
+		shortBlink()
+		shortBlink()
+		shortBlink()
+		time.Sleep(time.Millisecond * 400)
 
-		serial.Write([]byte("LED OFF\r\n"))
-		led.Low()
-		time.Sleep(time.Millisecond * DELAY)
+		// O: ---
+		longBlink()
+		longBlink()
+		longBlink()
+		time.Sleep(time.Millisecond * 400)
+
+		// S: ***
+		shortBlink()
+		shortBlink()
+		shortBlink()
+
+		time.Sleep(time.Second * 2) // Pause between SOS
 	}
+}
+
+func shortBlink() {
+	led.High()
+	time.Sleep(time.Millisecond * 200)
+	led.Low()
+	time.Sleep(time.Millisecond * 200)
+}
+
+func longBlink() {
+	led.High()
+	time.Sleep(time.Millisecond * 600)
+	led.Low()
+	time.Sleep(time.Millisecond * 200)
 }
