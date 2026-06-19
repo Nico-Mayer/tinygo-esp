@@ -1,0 +1,7 @@
+// Editor
+.helix
+.vscode
+
+// Binaries
+*.bin
+*.exe
