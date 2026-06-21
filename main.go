@@ -6,50 +6,36 @@ import (
 )
 
 const (
-	DELAY = 1000
+	buzzer       = machine.GPIO26
+	motionSensor = machine.GPIO27
+
+	holdTime     = 500 * time.Millisecond
+	pollInterval = 50 * time.Millisecond
 )
 
-var led machine.Pin
-
 func main() {
-	// Configure LED pin for your board:
-	// ESP32/ESP32-S3: GPIO2
-	// ESP32-C3: GPIO2
-	led = machine.GPIO2
-	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	serial := machine.Serial
+
+	buzzer.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	motionSensor.Configure(machine.PinConfig{Mode: machine.PinInput})
+
+	var lastMotion time.Time
+	alarmOn := false
 
 	for {
-		// S: ***
-		shortBlink()
-		shortBlink()
-		shortBlink()
-		time.Sleep(time.Millisecond * 400)
+		if motionSensor.Get() {
+			lastMotion = time.Now()
+			if !alarmOn {
+				buzzer.High()
+				alarmOn = true
+				serial.Write([]byte("Motion detected: buzzer on\n"))
+			}
+		} else if alarmOn && time.Since(lastMotion) >= holdTime {
+			buzzer.Low()
+			alarmOn = false
+			serial.Write([]byte("Buzzer off: hold time elapsed\n"))
+		}
 
-		// O: ---
-		longBlink()
-		longBlink()
-		longBlink()
-		time.Sleep(time.Millisecond * 400)
-
-		// S: ***
-		shortBlink()
-		shortBlink()
-		shortBlink()
-
-		time.Sleep(time.Second * 2) // Pause between SOS
+		time.Sleep(pollInterval)
 	}
-}
-
-func shortBlink() {
-	led.High()
-	time.Sleep(time.Millisecond * 200)
-	led.Low()
-	time.Sleep(time.Millisecond * 200)
-}
-
-func longBlink() {
-	led.High()
-	time.Sleep(time.Millisecond * 600)
-	led.Low()
-	time.Sleep(time.Millisecond * 200)
 }

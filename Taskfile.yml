@@ -3,24 +3,18 @@
 version: "3"
 
 vars:
-  GREETING: Hello, world!
+  TARGET: esp32-coreboard-v2
 
 tasks:
-  default:
-    desc: Print a greeting message
-    cmds:
-      - echo "{{.GREETING}}"
-    silent: true
-
   flash:
     desc: Build and flash to esp32
     cmds:
-      - tinygo build -target m5stack-core2 -o firmware.bin .
-      - tinygo flash -target m5stack-core2 .
+      - tinygo build -target {{.TARGET}} -o firmware.bin .
+      - tinygo flash -target {{.TARGET}} .
 
   flash-monitor:
     desc: Build and flash to esp32
     cmds:
-      - tinygo build -target m5stack-core2 -o firmware.bin .
-      - tinygo flash -target m5stack-core2 .
+      - tinygo build -target {{.TARGET}} -o firmware.bin .
+      - tinygo flash -target {{.TARGET}} .
       - tinygo monitor

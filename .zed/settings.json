@@ -13,7 +13,7 @@
           "GOROOT": "/Users/nimayer/Library/Caches/tinygo/goroot-064aec30ca6167ca00f6aeea83a3258317368898bb2936abd96b71c2ce6bf2c7",
           "GOOS": "linux",
           "GOARCH": "arm",
-          "GOFLAGS": "-tags=xtensa,baremetal,linux,arm,esp32,esp,m5stack_core2,tinygo,purego,osusergo,math_big_pure_go,gc.conservative,scheduler.tasks,serial.uart,tinygo.unicore",
+          "GOFLAGS": "-tags=xtensa,baremetal,linux,arm,esp32,esp,esp32_coreboard_v2,tinygo,purego,osusergo,math_big_pure_go,gc.conservative,scheduler.tasks,serial.uart,tinygo.unicore",
         },
       },
     },
