@@ -65,8 +65,8 @@ func clearScreen(display *ssd1306.Device) {
 func initDisplay() *ssd1306.Device {
 	i2c := machine.I2C0
 	i2c.Configure(machine.I2CConfig{
-		SDA: machine.GPIO21,
-		SCL: machine.GPIO22,
+		SDA: machine.GPIO8,
+		SCL: machine.GPIO9,
 	})
 
 	time.Sleep(2 * time.Second)

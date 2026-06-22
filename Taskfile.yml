@@ -3,7 +3,7 @@
 version: "3"
 
 vars:
-  TARGET: esp32-coreboard-v2
+  TARGET: esp32s3-generic
 
 tasks:
   flash:
