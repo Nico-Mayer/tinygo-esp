@@ -16,5 +16,4 @@ tasks:
     desc: Build and flash to esp32
     cmds:
       - tinygo build -target {{.TARGET}} -o firmware.bin .
-      - tinygo flash -target {{.TARGET}} .
-      - tinygo monitor
+      - tinygo flash -monitor -target {{.TARGET}} .

@@ -21,7 +21,7 @@ const (
 	led  = machine.GPIO17
 )
 
-//go:embed web/index_led.html
+//go:embed index.html
 var html string
 var ledState atomic.Bool
 
