@@ -2,6 +2,7 @@ package main
 
 import (
 	"blinky-esp/internal/display"
+	"blinky-esp/internal/wifi"
 	_ "embed"
 	"fmt"
 	"io"
@@ -9,10 +10,6 @@ import (
 	"net/http"
 	"sync/atomic"
 	"time"
-
-	"tinygo.org/x/drivers/netdev"
-	nl "tinygo.org/x/drivers/netlink"
-	link "tinygo.org/x/espradio/netlink"
 )
 
 const (
@@ -26,48 +23,30 @@ var html string
 var ledState atomic.Bool
 
 func main() {
-
+	display := display.NewDisplay()
 	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
 
-	serial := machine.Serial
-	serial.Configure(machine.UARTConfig{BaudRate: 115200})
-	serial.Write([]byte("HTTP Server\r\n"))
-
-	display := display.NewDisplay()
-
-	radioLink := link.Esplink{
-		ArenaPoolSize: 48 * 1024,
-	}
-	netdev.UseNetdev(&radioLink)
-
-	serial.Write([]byte("Connecting to Wi-Fi...\r\n"))
-	display.Show("Connecting...")
-	err := radioLink.NetConnect(&nl.ConnectParams{
-		Ssid:       ssid,
-		Passphrase: pw,
-	})
+	display.ShowAndLog("Connecting to wifi...")
+	radioLink, err := wifi.Connect(ssid, pw)
 	if err != nil {
-		serial.Write([]byte("Failed to connect to wifi\r\n"))
+		println("Faild to connect wifi.")
 		return
 	}
 
-	serial.Write([]byte("Connected!\r\n"))
-	display.Show("Connected!")
+	display.ShowAndLog("Connected!")
 
 	time.Sleep(5 * time.Second)
 
 	addr, _ := radioLink.Addr()
 	host := addr.String()
-	serial.Write([]byte("Server: http://"))
-	serial.Write([]byte(host))
-	serial.Write([]byte(":8080\r\n"))
+	display.ShowAndLog("Server: http://", host, ":8080")
 
 	http.Handle("/", logRequest(root))
 	http.Handle("/led/on", logRequest(ledOn))
 	http.Handle("/led/off", logRequest(ledOff))
 	http.Handle("/status", logRequest(status))
 
-	serial.Write([]byte("Starting server...\r\n"))
+	display.ShowAndLog("Starting server...")
 
 	go func() {
 		for {
@@ -78,19 +57,13 @@ func main() {
 
 	err = http.ListenAndServe(host+":8080", nil)
 	if err != nil {
-		serial.Write([]byte("Server error: "))
-		serial.Write([]byte(err.Error()))
-		serial.Write([]byte("\r\n"))
+		println("Server error: ", err.Error())
 	}
 }
 
 func logRequest(h http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		serial := machine.Serial
-		serial.Write([]byte(r.Method))
-		serial.Write([]byte(" "))
-		serial.Write([]byte(r.URL.Path))
-		serial.Write([]byte("\r\n"))
+		println(r.Method, " ", r.URL.Path)
 		h(w, r)
 	})
 }

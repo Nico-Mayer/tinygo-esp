@@ -3,6 +3,7 @@ package display
 import (
 	"image/color"
 	"machine"
+	"strings"
 	"time"
 
 	"tinygo.org/x/drivers/ssd1306"
@@ -42,9 +43,25 @@ func NewDisplay() *Display {
 	}
 }
 
-func (d *Display) Show(s string) {
+func (d *Display) Show(args ...string) {
+	var builder strings.Builder
+
+	for _, s := range args {
+		builder.WriteString(s)
+	}
+
 	d.device.ClearBuffer()
 	tinyfont.WriteLine(d.device, &freemono.Regular9pt7b,
-		0, 20, s, color.RGBA{255, 255, 255, 255})
+		0, 20, builder.String(), color.RGBA{255, 255, 255, 255})
 	d.device.Display()
+}
+
+func (d *Display) ShowAndLog(args ...string) {
+	var builder strings.Builder
+	for _, s := range args {
+		builder.WriteString(s)
+	}
+
+	println(builder.String())
+	d.Show(args...)
 }
