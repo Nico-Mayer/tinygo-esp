@@ -23,7 +23,7 @@ var html string
 var ledState atomic.Bool
 
 func main() {
-	display := display.NewDisplay()
+	display := display.NewDisplay(machine.GPIO8, machine.GPIO9)
 	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
 
 	display.ShowAndLog("Connecting to wifi...")

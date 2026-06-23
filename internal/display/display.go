@@ -11,20 +11,15 @@ import (
 	"tinygo.org/x/tinyfont/freemono"
 )
 
-const (
-	SDA_PIN = machine.GPIO8
-	SCL_PIN = machine.GPIO9
-)
-
 type Display struct {
 	device *ssd1306.Device
 }
 
-func NewDisplay() *Display {
+func NewDisplay(sda_pin, scl_pin machine.Pin) *Display {
 	i2c := machine.I2C0
 	i2c.Configure(machine.I2CConfig{
-		SDA: SDA_PIN,
-		SCL: SCL_PIN,
+		SDA: sda_pin,
+		SCL: scl_pin,
 	})
 
 	time.Sleep(2 * time.Second)

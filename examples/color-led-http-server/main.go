@@ -56,7 +56,7 @@ func (l *RGBLed) State() string {
 }
 
 func main() {
-	display := display.NewDisplay()
+	display := display.NewDisplay(machine.GPIO8, machine.GPIO9)
 
 	led, err := NewRGBLed(machine.GPIO7, machine.GPIO6, machine.GPIO5)
 	if err != nil {
