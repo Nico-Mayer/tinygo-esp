@@ -43,6 +43,8 @@ func NewDisplay() *Display {
 	}
 }
 
+const lineHeight = 16 // freemono 9pt ~13px tall + spacing
+
 func (d *Display) Show(args ...string) {
 	var builder strings.Builder
 
@@ -51,8 +53,11 @@ func (d *Display) Show(args ...string) {
 	}
 
 	d.device.ClearBuffer()
-	tinyfont.WriteLine(d.device, &freemono.Regular9pt7b,
-		0, 20, builder.String(), color.RGBA{255, 255, 255, 255})
+	white := color.RGBA{255, 255, 255, 255}
+	for i, line := range strings.Split(builder.String(), "\n") {
+		y := int16(lineHeight * (i + 1))
+		tinyfont.WriteLine(d.device, &freemono.Regular9pt7b, 0, y, line, white)
+	}
 	d.device.Display()
 }
 
