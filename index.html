@@ -15,14 +15,6 @@
                 font-size: 16px;
                 margin: 5px;
             }
-            .on {
-                background: #4caf50;
-                color: white;
-            }
-            .off {
-                background: #f44336;
-                color: white;
-            }
         </style>
     </head>
     <body>
@@ -30,38 +22,72 @@
         <p>Welcome to the TinyGo HTTP Server!</p>
 
         <h2>LED Control</h2>
-        <button class="on" onclick="set('on')">LED ON</button>
-        <button class="off" onclick="set('off')">LED OFF</button>
-
-        <h3>LED State: <b id="led-state">...</b></h3>
-
-        <h2>Status</h2>
-        <button
-            onclick="
-                fetch('/status')
-                    .then((r) => r.text())
-                    .then((d) => alert(d))
-            "
-        >
-            Check Status
-        </button>
+        <input id="color-picker" type="color" />
 
         <h2>About</h2>
         <p>This server is running on ESP32 with TinyGo 0.41</p>
         <p>Board: ESP32-C3 / ESP32-S3</p>
 
         <script>
+            const picker = document.getElementById("color-picker");
+            let last = 0;
+
+            picker.addEventListener("input", throttle(set, 50));
+            picker.addEventListener("change", set);
+
             function render(d) {
                 document.getElementById("led-state").textContent = d.led;
             }
-            function set(x) {
-                fetch("/led/" + x).then((r) => r.json().then(render));
+
+            function set() {
+                const rgb = hexToRgb(picker.value);
+                fetch("/set", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(rgb),
+                }).catch((r) => {
+                    console.log("Failed to set led value on server");
+                });
             }
+
             function poll() {
                 fetch("/status").then((r) => r.json().then(render));
             }
-            setInterval(poll, 500);
-            poll();
+
+            function hexToRgb(hex) {
+                const n = parseInt(hex.slice(1), 16);
+                return {
+                    r: (n >> 16) & 255,
+                    g: (n >> 8) & 255,
+                    b: n & 255,
+                };
+            }
+
+            function throttle(fn, delay) {
+                let last = 0,
+                    timer;
+                return function (...args) {
+                    const now = Date.now();
+                    const remaining = delay - (now - last);
+                    if (remaining <= 0) {
+                        clearTimeout(timer);
+                        timer = null;
+                        last = now;
+                        fn.apply(this, args);
+                    } else if (!timer) {
+                        timer = setTimeout(() => {
+                            last = Date.now();
+                            timer = null;
+                            fn.apply(this, args);
+                        }, remaining);
+                    }
+                };
+            }
+
+            // setInterval(poll, 500);
+            // poll();
         </script>
     </body>
 </html>

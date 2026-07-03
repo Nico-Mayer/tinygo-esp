@@ -1,0 +1,10 @@
+[env]
+TARGET = "esp32s3-generic"
+
+[tasks.flash]
+description = "Build and flash to esp32"
+run = "tinygo flash -target $TARGET ."
+
+[tasks.flash-monitor]
+description = "Build and flash to esp32 and monitor"
+run = "tinygo flash -monitor -target $TARGET ."
