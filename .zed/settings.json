@@ -10,7 +10,7 @@
       "binary": {
         "path": "gopls",
         "env": {
-          "GOROOT": "/Users/nimayer/Library/Caches/tinygo/goroot-d202109a95171c104242208cd7d402368966eb14f8ad8047332ee120d8d383e9",
+          "GOROOT": "/Users/nimayer/Library/Caches/tinygo/goroot-228732872e1139fa37df1e1223f2cc4a7613be8f9647bcc3a07daa263e415b5b",
           "GOOS": "linux",
           "GOARCH": "arm",
           "GOFLAGS": "-tags=xtensa,baremetal,linux,arm,esp32s3,esp,esp32s3_generic,tinygo,purego,osusergo,math_big_pure_go,gc.conservative,scheduler.tasks,serial.usb,tinygo.unicore",

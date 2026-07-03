@@ -8,3 +8,6 @@ run = "tinygo flash -target $TARGET ."
 [tasks.flash-monitor]
 description = "Build and flash to esp32 and monitor"
 run = "tinygo flash -monitor -target $TARGET ."
+
+[tools]
+tinygo = "latest"
